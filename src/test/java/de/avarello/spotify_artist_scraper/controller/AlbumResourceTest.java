@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
 import java.net.URI;
@@ -179,13 +178,11 @@ class AlbumResourceTest {
 
         URI importAlbumByArtistRequest = new URI(baseUrl + importUrl + importId);
 
-        ResponseEntity<UUID> createdArtistId = restTemplate.postForEntity(
+        return restTemplate.postForEntity(
                 importAlbumByArtistRequest,
                 new HttpEntity<>(null, headers),
                 UUID.class
         );
-
-        return createdArtistId;
     }
 
 
