@@ -161,7 +161,7 @@ class ArtistsResourceTest {
 
     @Test
     @DisplayName("can Create new Artist")
-    void createNewArtist() throws Exception {
+    void createNewArtist() {
 
         String newName = "TestArtist";
 
@@ -195,13 +195,11 @@ class ArtistsResourceTest {
 
         URI importAlbumByArtistRequest = new URI(baseUrl + importUrl + importId);
 
-        ResponseEntity<UUID> createdArtistId = restTemplate.postForEntity(
+        return restTemplate.postForEntity(
                 importAlbumByArtistRequest,
                 new HttpEntity<>(null, headers),
                 UUID.class
         );
-
-        return createdArtistId;
     }
 
 
