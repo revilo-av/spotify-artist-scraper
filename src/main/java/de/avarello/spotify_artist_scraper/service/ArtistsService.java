@@ -2,13 +2,11 @@ package de.avarello.spotify_artist_scraper.service;
 
 import de.avarello.spotify_artist_scraper.Mapper;
 import de.avarello.spotify_artist_scraper.domain.Artist;
+import de.avarello.spotify_artist_scraper.model.ArtistsDTO;
 import de.avarello.spotify_artist_scraper.model.ReadAlbumDTO;
 import de.avarello.spotify_artist_scraper.model.ReadArtistsDTO;
-import de.avarello.spotify_artist_scraper.model.ArtistsDTO;
 import de.avarello.spotify_artist_scraper.repos.AlbumRepository;
 import de.avarello.spotify_artist_scraper.repos.ArtistsRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -22,7 +20,6 @@ import java.util.UUID;
 
 @Service
 public class ArtistsService {
-    private static final Logger logger = LoggerFactory.getLogger(ArtistsService.class);
     private final AlbumRepository albumRepository;
     private final ArtistsRepository artistsRepository;
 
@@ -51,7 +48,7 @@ public class ArtistsService {
             final Artist artist = new Artist();
 
             artist.setName(artistsDTO.name());
-            logger.debug("Create new Entry");
+
             return artistsRepository.save(artist).getId();
         }
 

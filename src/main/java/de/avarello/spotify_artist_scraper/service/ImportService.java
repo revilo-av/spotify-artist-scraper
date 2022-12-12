@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import se.michaelthelin.spotify.model_objects.specification.AlbumSimplified;
 import se.michaelthelin.spotify.model_objects.specification.ArtistSimplified;
 
@@ -50,25 +51,26 @@ public class ImportService {
     }
 
     private Set<Artist> saveArtists(Set<Artist> artists) {
-        return artists.stream()
-                .map(artist -> {
-                    try {
-                        return save(artist);
-                    } catch (Exception exception) {
-                        logger.error("Error By Store Artist Data {0}", exception);
-                        return null;
-                    }
-                })
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
+        Set<Artist> resultArtist = new HashSet<>();
+
+        artists.forEach(artist -> {
+            try {
+                var result = saveArtist(artist);
+                resultArtist.add(result);
+            } catch (Exception exception) {
+                logger.error("Error By Store Artist Data {0}", exception);
+            }
+        });
+
+        return resultArtist;
     }
 
     private void saveAlbums(List<Album> albums) {
         albums.forEach(album -> {
             try {
-                save(album);
-            } catch (Exception ex) {
-                logger.error("Error By Store Album Data {0}", ex);
+                saveAlbum(album);
+            } catch (Exception exception) {
+                logger.error("Error By Store Album Data {0}", exception);
             }
         });
     }
@@ -83,10 +85,7 @@ public class ImportService {
 
         return albumSimplified.stream()
                 .map(album -> {
-
-                    final int firstArtistPosition = 0;
-
-                    var firstArtist = album.getArtists()[firstArtistPosition];
+                    var firstArtist = CollectionUtils.firstElement(Arrays.asList(album.getArtists()));
 
                     var currentArtist = getArtistById(artists, firstArtist);
 
@@ -112,17 +111,16 @@ public class ImportService {
                 .collect(Collectors.toSet());
     }
 
-    public void save(Album album) {
+    public void saveAlbum(Album album) {
         if (albumRepository.existWithSpotifyId(album.getSpotifyId())) {
             logger.debug("no change");
             albumRepository.findBySpotifyId(album.getSpotifyId());
         } else {
             albumRepository.save(album);
         }
-
     }
 
-    public Artist save(Artist artist) {
+    public Artist saveArtist(Artist artist) {
 
         if (!artistsRepository.existArtistWithSpotifyId(artist.getSpotifyId())) {
             return artistsRepository.save(artist);
