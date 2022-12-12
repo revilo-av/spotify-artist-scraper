@@ -13,7 +13,7 @@ import java.util.*;
 public class SpotifyRepository {
     private static final Logger logger = LoggerFactory.getLogger(SpotifyRepository.class);
     private final SpotifyConfig spotifyConfig;
-    private SpotifyApi spotifyApi;
+    private final SpotifyApi spotifyApi;
 
     public SpotifyRepository(final SpotifyConfig spotifyConfig) {
         this.spotifyConfig = spotifyConfig;

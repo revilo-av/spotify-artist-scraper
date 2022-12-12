@@ -63,18 +63,14 @@ public class ImportService {
                 .collect(Collectors.toSet());
     }
 
-    private List<Album> saveAlbums(List<Album> albums) {
-        return albums.stream()
-                .map(album -> {
-                    try {
-                        return saveOrReset(album);
-                    } catch (Exception ex) {
-                        logger.error("Error By Store Album Data {0}", ex);
-                        return null;
-                    }
-                })
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+    private void saveAlbums(List<Album> albums) {
+        albums.forEach(album -> {
+            try {
+                saveOrReset(album);
+            } catch (Exception ex) {
+                logger.error("Error By Store Album Data {0}", ex);
+            }
+        });
     }
 
     public void importArtistPropertyFile() {
@@ -98,7 +94,7 @@ public class ImportService {
 
                     currentArtist.ifPresent(mapedAlbum::setArtist);
                     return mapedAlbum;
-                }).collect(Collectors.toList());
+                }).toList();
     }
 
     private static Optional<Artist> getArtistById(Set<Artist> artists, ArtistSimplified firstArtist) {
@@ -116,7 +112,7 @@ public class ImportService {
                 .collect(Collectors.toSet());
     }
 
-    public Album saveOrReset(Album album) {
+    public void saveOrReset(Album album) {
 
 
         if (albumRepository.existWithSpotifyId(album.getSpotifyId())) {
@@ -130,13 +126,13 @@ public class ImportService {
                 foundAlbum.setReleaseDate(album.getReleaseDate());
                 foundAlbum.setType(album.getType());
 
-                return albumRepository.save(foundAlbum);
+                albumRepository.save(foundAlbum);
             } else {
                 logger.debug("no change");
-                return albumRepository.findBySpotifyId(album.getSpotifyId());
+                albumRepository.findBySpotifyId(album.getSpotifyId());
             }
         } else {
-            return albumRepository.save(album);
+            albumRepository.save(album);
         }
 
     }
