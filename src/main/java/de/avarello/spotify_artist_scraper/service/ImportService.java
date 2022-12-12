@@ -53,7 +53,7 @@ public class ImportService {
         return artists.stream()
                 .map(artist -> {
                     try {
-                        return saveOrReset(artist);
+                        return save(artist);
                     } catch (Exception exception) {
                         logger.error("Error By Store Artist Data {0}", exception);
                         return null;
@@ -66,7 +66,7 @@ public class ImportService {
     private void saveAlbums(List<Album> albums) {
         albums.forEach(album -> {
             try {
-                saveOrReset(album);
+                save(album);
             } catch (Exception ex) {
                 logger.error("Error By Store Album Data {0}", ex);
             }
@@ -112,32 +112,17 @@ public class ImportService {
                 .collect(Collectors.toSet());
     }
 
-    public void saveOrReset(Album album) {
-
-
+    public void save(Album album) {
         if (albumRepository.existWithSpotifyId(album.getSpotifyId())) {
-            if (!albumRepository.existsBySpotifyIdAndChangedTrue(album.getSpotifyId())) {
-                logger.debug("reset data");
-                var foundAlbum = albumRepository.findBySpotifyId(album.getSpotifyId());
-                foundAlbum.setName(album.getName());
-                foundAlbum.setSpotifyId(album.getSpotifyId());
-                foundAlbum.setAlbumGroup(album.getAlbumGroup());
-                foundAlbum.setArtist(album.getArtist());
-                foundAlbum.setReleaseDate(album.getReleaseDate());
-                foundAlbum.setType(album.getType());
-
-                albumRepository.save(foundAlbum);
-            } else {
-                logger.debug("no change");
-                albumRepository.findBySpotifyId(album.getSpotifyId());
-            }
+            logger.debug("no change");
+            albumRepository.findBySpotifyId(album.getSpotifyId());
         } else {
             albumRepository.save(album);
         }
 
     }
 
-    public Artist saveOrReset(final Artist artist) {
+    public Artist save(Artist artist) {
 
         if (!artistsRepository.existArtistWithSpotifyId(artist.getSpotifyId())) {
             return artistsRepository.save(artist);
