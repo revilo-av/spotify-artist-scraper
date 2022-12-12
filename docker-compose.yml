@@ -1,0 +1,28 @@
+version: '3.5'
+
+services:
+  postgres-database:
+    container_name: postgres_container
+    image: postgres
+    environment:
+      TZ: Europe/Berlin
+      POSTGRES_DB: spotify-album-scrapper-db
+      POSTGRES_USER: test-user
+      POSTGRES_PASSWORD: example
+    volumes:
+       - ./postgres:/data/postgres
+    ports:
+      - "5435:5432"
+
+  postgres-database-test:
+    container_name: postgres_container_test
+    image: postgres
+    environment:
+      TZ: Europe/Berlin
+      POSTGRES_DB: test
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+    volumes:
+      - ./postgres:/data/postgres
+    ports:
+      - "5436:5432"
